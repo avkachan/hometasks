@@ -4,4 +4,3 @@ if word == drow:
     print ('Cлово - палиндром')
 else:
     print('Cлово - не палиндром')
-

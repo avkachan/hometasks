@@ -7,19 +7,21 @@ import configparser
 snapshot = 0
 config = configparser.ConfigParser()
 config.read('config.ini')
-type = config.get('setup', 'type')
+type_1 = config.get('setup', 'type')
 time_1 = config.get('setup', 'time_m')
 cleartxt = open('infa.txt', "w")
 cleartxt.close()
 clearjson = open("infa.json", "w")
 clearjson.close()
-def txt ():
+
+
+def txt():
     global snapshot
     snapshot += 1
     f = open('infa.txt', "a")
-    format = '%Y-%m-%d %H:%M:%S %Z'
+    dformat = '%Y-%m-%d %H:%M:%S %Z'
     time_now = datetime.datetime.now()
-    time_stmp = datetime.datetime.strftime(time_now, format)
+    time_stmp = datetime.datetime.strftime(time_now, dformat)
     f.write('Snapshot {0}:\ntime - {1}\n'.format(snapshot, time_stmp))
     f.write('Overall CPU load: {} %\n'.format(psutil.cpu_percent()))
     f.write('Overall memory usage: {} MB\n'.format((psutil.virtual_memory()[3]/1024/1024).__round__(2)))
@@ -30,12 +32,13 @@ def txt ():
     f.write("\n")
     f.close()
 
+
 def jsonf():
     global snapshot
     snapshot += 1
-    format = '%Y-%m-%d %H:%M:%S %Z'
+    dformat = '%Y-%m-%d %H:%M:%S %Z'
     time_now = datetime.datetime.now()
-    time_stmp = datetime.datetime.strftime(time_now, format)
+    time_stmp = datetime.datetime.strftime(time_now, dformat)
     top = {
         'Overall CPU load': str(psutil.cpu_percent()) + ' %',
         'Overall memory usage': str((psutil.virtual_memory()[3]/1024/1024).__round__(2)) + " MB",
@@ -44,13 +47,13 @@ def jsonf():
         'Network sent': str((psutil.net_io_counters()[0]/1024/1024).__round__(2)) + " MB",
         'Network recieve': str((psutil.net_io_counters()[1] / 1024 / 1024).__round__(2)) + " MB"
     }
-    data = ['SNAPSHOT ' +  str(snapshot) + ": " + str(time_stmp) + ": ", top]
+    data = ['SNAPSHOT ' + str(snapshot) + ": " + str(time_stmp) + ": ", top]
     with open("infa.json", "a") as f:
         json.dump(data, f, indent=3, sort_keys=True)
 
-if type == "txt":
+if type_1 == "txt":
     schedule.every(int(time_1)).seconds.do(txt)
-elif type == "json":
+elif type_1 == "json":
     schedule.every(int(time_1)).seconds.do(jsonf)
 while True:
     schedule.run_pending()
